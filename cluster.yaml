@@ -1,0 +1,10 @@
+image: centos/7
+minions: 2
+
+network:
+  minion: 192.168.26.
+  master: 192.168.26.10
+
+pod:
+  # Flannel specific
+  cidr: 10.244.0.0/16

@@ -1,0 +1,9 @@
+# Intellij ignorables
+.idea/
+*.iml
+
+# Vagrant ignorables
+.vagrant/
+
+# Log ignorables
+*.log
