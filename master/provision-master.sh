@@ -2,15 +2,6 @@
 
 # This script is designed to run as non-root user
 
-InstallKubectlAutocompletion() {
-# amends ~/.bashrc to provide kubectl auto completion
-    cat <<EOF >> $HOME/.bashrc
-# enables kubectl auto completion
-source <(kubectl completion bash)
-EOF
-    source ~/.bashrc
-}
-
 InstallPodNetworking() {
     # Sets up Network add-on (https://kubernetes.io/docs/concepts/cluster-administration/networking/)
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
@@ -20,7 +11,12 @@ InstallKubeConfig() {
     mkdir -p $HOME/.kube
     sudo cp -Rf /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
-    export KUBECONFIG=$HOME/.kube/config
+
+    cat <<EOF >> $HOME/.bashrc
+# Sets KUBECONFIG variable
+export KUBECONFIG=$HOME/.kube/config
+EOF
+    source ~/.bashrc
 }
 
 InstallDashboard() {
@@ -30,11 +26,14 @@ InstallDashboard() {
 }
 
 CopyHostSshPubKey() {
-    cat ~/.ssh/host.pub  >>  ~/.ssh/authorized_keys
+    cat <<EOF >> $HOME/.ssh/authorized_keys
+----HOST PUBLIC KEY BELOW------
+EOF
+    cat ~/.ssh/host.pub  >> $HOME/.ssh/authorized_keys
 }
 
 InstallDns() {
-#    kubectl create -f https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml
+    # kubectl create -f https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml
     kubectl create -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns.yaml
 }
 
@@ -46,5 +45,4 @@ InstallKubeConfig
 InstallPodNetworking
 InstallDashboard
 #InstallDns
-InstallKubectlAutocompletion
 CopyHostSshPubKey

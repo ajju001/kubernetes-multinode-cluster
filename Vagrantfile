@@ -53,24 +53,24 @@ Vagrant.configure("2") do |config|
   end
 
   # Minions
-  (1..cluster['minions']).each do |i|
-    config.vm.define "minion#{i}" do |minion|
-      # VM config
-      minion.vm.provider "virtualbox" do |vm|
-        vm.cpus = 1
-        vm.memory = "1024"
-
-        vm.check_guest_additions = false
-        vm.functional_vboxsf = false
-      end
-      minion.vm.hostname = "minion#{i}"
-      minion.vm.network :private_network, ip: cluster['network']['minion'] + "#{i + 10}"
-      # Provisioning
-      minion.vm.provision :shell, path: "provision.sh"
-      minion.vm.provision :shell, path: "minion/provision-minion.sh", env: {
-          "KUBETOKEN" => KUBETOKEN,
-          "MASTER_IP" => MASTER_IP
-      }
-    end
-  end
+  # (1..cluster['minions']).each do |i|
+  #   config.vm.define "minion#{i}" do |minion|
+  #     # VM config
+  #     minion.vm.provider "virtualbox" do |vm|
+  #       vm.cpus = 1
+  #       vm.memory = "1024"
+  #
+  #       vm.check_guest_additions = false
+  #       vm.functional_vboxsf = false
+  #     end
+  #     minion.vm.hostname = "minion#{i}"
+  #     minion.vm.network :private_network, ip: cluster['network']['minion'] + "#{i + 10}"
+  #     # Provisioning
+  #     minion.vm.provision :shell, path: "provision.sh"
+  #     minion.vm.provision :shell, path: "minion/provision-minion.sh", env: {
+  #         "KUBETOKEN" => KUBETOKEN,
+  #         "MASTER_IP" => MASTER_IP
+  #     }
+  #   end
+  # end
 end

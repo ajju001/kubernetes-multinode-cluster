@@ -1,5 +1,9 @@
 #!/bin/bash -x
 
+DisableSwap() {
+    swapoff -a
+    sed -i 's/\/swapfile/#\/swapfile/' /etc/fstab
+}
 
 modprobe br_netfilter
 
@@ -33,8 +37,7 @@ EOF
 setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-# Disables swap
-swapoff -a
+DisableSwap
 
 # Updates yum packages
 yum -y update
