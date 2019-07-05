@@ -29,11 +29,22 @@ InstallDashboard() {
     kubectl proxy &
 }
 
+CopyHostSshPubKey() {
+    cat ~/.ssh/host.pub  >>  ~/.ssh/authorized_keys
+}
+
+InstallDns() {
+#    kubectl create -f https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml
+    kubectl create -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns.yaml
+}
+
 # Main
 sudo kubeadm reset -f
 sudo kubeadm init --apiserver-advertise-address=${MASTER_IP} --pod-network-cidr=${POD_CIDR} --token ${KUBETOKEN} --token-ttl 0
 
 InstallKubeConfig
-InstallKubectlAutocompletion
 InstallPodNetworking
 InstallDashboard
+#InstallDns
+InstallKubectlAutocompletion
+CopyHostSshPubKey

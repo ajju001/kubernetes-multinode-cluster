@@ -38,17 +38,22 @@ Vagrant.configure("2") do |config|
     # Network
     master.vm.network :private_network, ip: MASTER_IP
     master.vm.network "forwarded_port", guest: 8443, host: 8443
-    # Provision
+    # kubectl
+    master.vm.network "forwarded_port", guest: 6443, host: 6443
+    # dashboard
+    master.vm.network "forwarded_port", guest: 8001, host: 8001
+    # Provisioning
+    master.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/host.pub"
     master.vm.provision :shell, path: "provision.sh"
     master.vm.provision :shell, path: "master/provision-master.sh", privileged: false, env: {
-        "POD_NW_CIDR" => cluster['pod']['cidr'],
+        "KUBETOKEN" => KUBETOKEN,
         "MASTER_IP" => MASTER_IP,
-        "KUBETOKEN" => KUBETOKEN
+        "POD_CIDR" => cluster['pod']['cidr']
     }
   end
 
   # Minions
-  (1..(cluster['minions'])).each do |i|
+  (1..cluster['minions']).each do |i|
     config.vm.define "minion#{i}" do |minion|
       # VM config
       minion.vm.provider "virtualbox" do |vm|
@@ -60,12 +65,11 @@ Vagrant.configure("2") do |config|
       end
       minion.vm.hostname = "minion#{i}"
       minion.vm.network :private_network, ip: cluster['network']['minion'] + "#{i + 10}"
-      minion.vm.network "forwarded_port", guest: 22, host: (i + 2200)
-      # Provision
+      # Provisioning
       minion.vm.provision :shell, path: "provision.sh"
       minion.vm.provision :shell, path: "minion/provision-minion.sh", env: {
-          "MASTER_IP" => MASTER_IP,
-          "KUBETOKEN" => KUBETOKEN
+          "KUBETOKEN" => KUBETOKEN,
+          "MASTER_IP" => MASTER_IP
       }
     end
   end
