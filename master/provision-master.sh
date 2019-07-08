@@ -22,14 +22,14 @@ EOF
 InstallDashboard() {
     # Sets up Kubernetes Dashboard
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
-    kubectl proxy &
+    # kubectl proxy &
 }
 
 CopyHostSshPubKey() {
     cat <<EOF >> $HOME/.ssh/authorized_keys
 ----HOST PUBLIC KEY BELOW------
 EOF
-    cat ~/.ssh/host.pub  >> $HOME/.ssh/authorized_keys
+    cat ~/.ssh/host.pub >> $HOME/.ssh/authorized_keys
 }
 
 # Main

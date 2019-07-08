@@ -40,8 +40,6 @@ Vagrant.configure("2") do |config|
     master.vm.network "forwarded_port", guest: 8443, host: 8443
     # kubectl
     master.vm.network "forwarded_port", guest: 6443, host: 6443
-    # dashboard
-    master.vm.network "forwarded_port", guest: 8001, host: 8001
     # Provisioning
     master.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/host.pub"
     master.vm.provision :shell, path: "provision.sh"
